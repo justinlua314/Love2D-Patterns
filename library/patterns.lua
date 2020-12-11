@@ -14,7 +14,8 @@ pattern = {
 	},
 }
 
-function pattern.new(data)
+function pattern.new(name, data)
+	data.type = name
 	table.insert(pattern.list, data)
 end
 
