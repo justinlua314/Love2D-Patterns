@@ -78,7 +78,6 @@ function pattern.randomCoordinates()
 end
 
 function pattern.drawLine(colors, thickness, location, direction, rotation, lines, height)
-	colors = colors or "random"
 	thickness = thickness or 1
 	location = location or {x = 0, y = 0}
 	direction = direction or "forward"
@@ -170,8 +169,6 @@ function pattern.drawSpiral(colors, thickness, location, direction, rotation, li
 end
 
 function pattern.drawNoise(colors, details, density, spread, shade, shape)
-	print(details.x, details.y)
---	colors = colors or pattern.randomColor()
 	details = details or {x = 0, y = 0, width = 100, height = 100}
 	density = density or 1
 	spread = spread or 1
@@ -203,7 +200,6 @@ function pattern.drawNoise(colors, details, density, spread, shade, shape)
 end
 
 function pattern.drawWordPlot(colors, details, words, size)
-	colors = colors or pattern.randomColor()
 	details = details or {x = 0, y = 0, width = global.width, height = global.height}
 	words = words or pattern.randomWords(10)
 	size = size or {min = 10, max = 20}
@@ -238,12 +234,6 @@ function pattern.render()
 				pattern.drawWordPlot(draw.colors, draw.details, draw.words, draw.size)
 			end
 		end
-
-		love.graphics.setNewFont(50)
-		love.graphics.setColor(1, 1, 1)
-		love.graphics.printf(pattern.randomWords(1),
-		((global.width / 2) - 100),
-		((global.height / 2) - 20), 500)
 
 	love.graphics.setCanvas()
 end
