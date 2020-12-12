@@ -37,6 +37,41 @@ function pattern.randomColor()
 	return color
 end
 
+function pattern.randomColors(amount)
+	local t = {}
+
+	for i = 1, amount do
+		table.insert(t, pattern.randomColor())
+	end
+
+	return t
+end
+
+function pattern.randomWords(amount)
+	amount = amount or 1
+	local words = {}
+
+	local pulledVolumes = {}
+	local t = {}
+
+	for i = 1, amount do
+		table.insert(t, love.math.random(47))
+	end
+
+	for _,selection in pairs(t) do
+		if not pulledVolumes[selection] then
+			print("Rendering new dictionary number " .. selection .. "...")
+			local s = love.filesystem.read("dictionary/dic" .. selection .. ".txt")
+			pulledVolumes[selection] = global.explodeString(s, "\n")
+		end
+		
+		local w = pulledVolumes[selection][love.math.random(#pulledVolumes[selection])]
+		table.insert(words, w)
+	end
+
+	return words
+end
+
 function pattern.randomCoordinates()
 	local coordinates = {x = love.math.random(global.width), y = love.math.random(global.height)}
 	return coordinates
@@ -136,7 +171,7 @@ end
 
 function pattern.drawNoise(colors, details, density, spread, shade, shape)
 	print(details.x, details.y)
-	colors = colors or pattern.randomColor()
+--	colors = colors or pattern.randomColor()
 	details = details or {x = 0, y = 0, width = 100, height = 100}
 	density = density or 1
 	spread = spread or 1
@@ -167,18 +202,48 @@ function pattern.drawNoise(colors, details, density, spread, shade, shape)
 	end
 end
 
+function pattern.drawWordPlot(colors, details, words, size)
+	colors = colors or pattern.randomColor()
+	details = details or {x = 0, y = 0, width = global.width, height = global.height}
+	words = words or pattern.randomWords(10)
+	size = size or {min = 10, max = 20}
+
+	if type(colors[1]) ~= "table" then love.graphics.setColor(colors) end
+
+	for _,word in pairs(words) do
+		if type(colors[1]) == "table" then
+			love.graphics.setColor(colors[love.math.random(#colors)])
+		end
+
+		love.graphics.setNewFont(love.math.random(size.min, size.max))
+		love.graphics.printf(word,
+		love.math.random(details.x, (details.x + details.width)),
+		love.math.random(details.y, (details.y + details.height)),
+		10000)
+	end
+end
+
 function pattern.render()
 	love.graphics.setCanvas(pattern.canvas)
 		love.graphics.clear(0, 0, 0)
 
 		for _,draw in pairs(pattern.list) do
-			if draw.type == "line" then
+			if draw.type == "lines" then
 				pattern.drawLine(draw.colors, draw.thickness, draw.location, draw.direction, draw.rotation, draw.lines, draw.height)
 			elseif draw.type == "spiral" then
 				pattern.drawSpiral(draw.colors, draw.thickness, draw.location, draw.direction, draw.rotation, draw.limit)
 			elseif draw.type == "noise" then
 				pattern.drawNoise(draw.colors, draw.details, draw.density, draw.spread, draw.shade, draw.shape)
+			elseif draw.type == "wordPlot" then
+				pattern.drawWordPlot(draw.colors, draw.details, draw.words, draw.size)
 			end
 		end
+
+		love.graphics.setNewFont(50)
+		love.graphics.setColor(1, 1, 1)
+		love.graphics.printf(pattern.randomWords(1),
+		((global.width / 2) - 100),
+		((global.height / 2) - 20), 500)
+
 	love.graphics.setCanvas()
 end
