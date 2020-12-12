@@ -134,6 +134,39 @@ function pattern.drawSpiral(colors, thickness, location, direction, rotation, li
 	end
 end
 
+function pattern.drawNoise(colors, details, density, spread, shade, shape)
+	print(details.x, details.y)
+	colors = colors or pattern.randomColor()
+	details = details or {x = 0, y = 0, width = 100, height = 100}
+	density = density or 1
+	spread = spread or 1
+	shape = shape or "rectangle"
+
+	for column = 1, details.height, density do
+		for row = 1, details.width, density do
+			local highlight = 1
+
+			if shade then
+				highlight = love.math.noise(love.math.random())
+				if highlight < shade then highlight = shade end
+			end
+
+			local col = colors[love.math.random(#colors)]
+			table.insert(col, 4, highlight)
+			love.graphics.setColor(col)
+
+			local xPoint = (details.x + row)
+			local yPoint = (details.y + column)
+
+			if shape == "rectangle" then
+				love.graphics.rectangle("fill", xPoint, yPoint, love.math.random(spread), love.math.random(spread))
+			elseif shape == "circle" then
+				love.graphics.circle("fill", xPoint, yPoint, love.math.random(spread))
+			end
+		end
+	end
+end
+
 function pattern.render()
 	love.graphics.setCanvas(pattern.canvas)
 		love.graphics.clear(0, 0, 0)
@@ -143,6 +176,8 @@ function pattern.render()
 				pattern.drawLine(draw.colors, draw.thickness, draw.location, draw.direction, draw.rotation, draw.lines, draw.height)
 			elseif draw.type == "spiral" then
 				pattern.drawSpiral(draw.colors, draw.thickness, draw.location, draw.direction, draw.rotation, draw.limit)
+			elseif draw.type == "noise" then
+				pattern.drawNoise(draw.colors, draw.details, draw.density, draw.spread, draw.shade, draw.shape)
 			end
 		end
 	love.graphics.setCanvas()

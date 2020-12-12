@@ -21,6 +21,14 @@ function love.load()
 		height = 200
 	})
 
+	pattern.new("noise", {
+		colors = pattern.colors.rainbow,
+		details = {x = 0, y = 201, width = 600, height = love.graphics.getHeight()},
+		density = 5,
+		spread = 10,
+		shade = 0.2
+	})
+
 	pattern.render()
 end
 
@@ -30,10 +38,4 @@ end
 function love.draw()
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.draw(pattern.canvas, 0, 0)
-end
-
-function love.keypressed(key)
-end
-
-function love.mousemoved(x, y)
 end
